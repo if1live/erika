@@ -41,9 +41,9 @@
                                 <div class="slides">
                                     {% for item in slideFeature %}
                                     <div class="slide">
-                                        <h2>{{ item['title'] }}</h2>
-                                        <p class="bg-color-{{ item['backgrounColor'] }} fg-color-white padding20">
-                                            {{ item['content'] }}
+                                        <h2>{{ item['title']|safe }}</h2>
+                                        <p class="bg-color-{{ item['backgrounColor']|e }} fg-color-white padding20">
+                                            {{ item['content']|safe }}
                                         </p>
                                     </div>
                                     {% endfor %}
@@ -72,13 +72,13 @@
                 <div class="row">
                     <div id="iconic-features" class="span4">
                         <div class="tile double">
-                            {{ smallFeature1 }}
+                            {{ smallFeature1|safe }}
                         </div>
                         <div class="tile double">
-                            {{ smallFeature2 }}
+                            {{ smallFeature2|safe }}
                         </div>
                         <div class="tile double">
-                            {{ smallFeature3 }}
+                            {{ smallFeature3|safe }}
                         </div>
                     </div>
                     <div class="span8">
@@ -87,11 +87,11 @@
                                 {% for item in sampleCode %}
                                 <div class="slide">
                                     <blockquote>
-                                        <pre>{{ item.code }}</pre>
+                                        <pre>{{ item['code']|e }}</pre>
                                     </blockquote>
                                     <div class="description">
-                                        <h2>{{ item.owner }}<small>{{ item.type }}</small></h2>
-                                        <div class="rating" data-role="rating" data-param-rating="{{ item.rating }}"></div>
+                                        <h2>{{ item['owner']|e }}<small>{{ item['type']|e }}</small></h2>
+                                        <div class="rating" data-role="rating" data-param-rating="{{ item['rating']|e }}"></div>
                                     </div>
                                 </div>
                                 {% endfor %}
