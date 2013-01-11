@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Stylesheet Area Start -->
-        <link href="/static/css/modern.css" rel="stylesheet" type="text/css" />
-        <link href="/static/css/modern-responsive.css" rel="stylesheet" type="text/css" />
-        <link href="/static/css/site.css" rel="stylesheet" type="text/css" />
+{% extends "common/base.html" %}
+{% set jsComponents = ['carousel', 'rating'] %}
+{% set slideFeature = [{'title':'Sync your Configuration', 'backgrounColor':'green', 'content':'''You can sync own configuration files for editor(e.g. emacs, vim... e.t.c.) or shell.<i class="fg-color-white place-right icon-cloud" style="font-size: 42pt"></i><br /><br /><br />'''},{'title':'Share it', 'backgrounColor':'red', 'content':'''Share configuration with others'''}] %}
+{% block customStylesheet %}
         <style type="text/css">
             #iconic-features:last-child {
                 margin-bottom: 0;
@@ -34,33 +29,9 @@
                 height: 95px;
             }
         </style>
-        <!-- Stylesheet Area End -->
-        <!-- Script Area Start -->
-        <script src="/static/js/jquery-1.8.3.min.js" type="application/javascript"></script>
-        <!-- Script Area End -->
-        <title>Project Erika</title>
-    </head>
-    <body class="modern-ui">
-        <div class="page">
-            <div class="nav-bar">
-                <div class="nav-bar-inner padding10">
-                    <span class="pull-menu"></span>
-                    <a href="/template/">
-                        <span class="element brand"> 
-                            <img class="place-left" src="/static/img/logo32.png" width=32 height=32 alt="Erika" />
-                            Project Erika <small>{{ version }}</small>
-                        </span>
-                    </a>
-                    <div class="divider"></div>
-                    <ul class="menu">
-                        <li><a href="/">home</a></li>
-                        <li><a href="/login">login</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="blank-line-15"></div>
-        <div class="page secondary">
+{% endblock customStylesheet %}
+{% block title %}Project Erika{% endblock title %}
+{% block contents %}
             <div class="grid">
                 <div class="row">
                     <div class="span8">
@@ -68,18 +39,14 @@
                             <h2>Project Erika</h2>
                             <div id="specSlide" class="carousel" data-role="carousel" data-param-duration="200">
                                 <div class="slides">
+                                    {% for item in slideFeature %}
                                     <div class="slide">
-                                        <h2>Sync your Configuration</h2>
-                                        <p class="bg-color-green fg-color-white padding20">
-                                            You can sync own configuration files for editor(e.g. emacs, vim... e.t.c.) or shell.
-                                            <i class="fg-color-white place-right icon-cloud" style="font-size: 42pt"></i>
-                                            <br /><br /><br />
+                                        <h2>{{ item['title'] }}</h2>
+                                        <p class="bg-color-{{ item['backgrounColor'] }} fg-color-white padding20">
+                                            {{ item['content'] }}
                                         </p>
                                     </div>
-                                    <div class="slide">
-                                        <h2>Share it</h2>
-                                        <p class="bg-color-red fg-color-white padding20">Share configuration with others</p>
-                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -87,7 +54,7 @@
                     <div class="span4">
                         <div id="joinBlock" class="hero-unit text-center padding30">
                             <div class="blank-line-15"></div>
-                            <h2>JOIN NOW</h2>
+                            <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
                             <form action="/join">
                                 <div class="input-control text">
                                     <input type="text" name="username" placeholder="ID" />
@@ -105,176 +72,34 @@
                 <div class="row">
                     <div id="iconic-features" class="span4">
                         <div class="tile double">
+                            {{ smallFeature1 }}
                         </div>
                         <div class="tile double">
+                            {{ smallFeature2 }}
                         </div>
                         <div class="tile double">
+                            {{ smallFeature3 }}
                         </div>
                     </div>
                     <div class="span8">
                         <div id="codesample" class="carousel" data-role="carousel" data-param-effect="slide" data-param-direction="right" data-param-duraion="300000" data-param-period="4000" data-param-stop="on" data-param-markers="off">
                             <div class="slides">
+                                {% for item in sampleCode %}
                                 <div class="slide">
                                     <blockquote>
-    set et<br />
-    set ts=4
+                                        <pre>{{ item.code }}</pre>
                                     </blockquote>
                                     <div class="description">
-                                        <h2>if1live<small>vimrc</small></h2>
-                                        <div class="rating" data-role="rating" data-param-rating="2"></div>
+                                        <h2>{{ item.owner }}<small>{{ item.type }}</small></h2>
+                                        <div class="rating" data-role="rating" data-param-rating="{{ item.rating }}"></div>
                                     </div>
                                 </div>
-                                <div class="slide">
-                                    <blockquote>
-<pre>
-function precmd {
-
-local TERMWIDTH
-(( TERMWIDTH = ${COLUMNS} - 1 ))
-
-###
-# Truncate the path if it's too long.
-
-PR_FILLBAR=""
-PR_PWDLEN=""
-
-local promptsize=${#${(%):---(%n@%m:%l)     }}
-local pwdsize=${#${(%):-%~}}
-
-if [[ "$promptsize + $pwdsize" -gt $TERMWIDTH ]]; then
-	((PR_PWDLEN=$TERMWIDTH - $promptsize))
-else
-	PR_FILLBAR="\${(l.(($TERMWIDTH - ($promptsize + $pwdsize)))..${PR_HBAR}.)}"
-fi
-
-
-###
-# Get APM info.
-
-if which ibam > /dev/null; then
-	PR_APM_RESULT=`ibam --percentbattery`
-elif which apm > /dev/null; then
-	PR_APM_RESULT=`apm`
-fi
-}
-
-setopt extended_glob
-preexec () {
-if [[ "$TERM" == "screen" ]]; then
-	local CMD=${1[(wr)^(*=*|sudo|-*)]}
-	echo -ne "\ek$CMD\e\\"
-fi
-}
-
-
-setprompt () {
-
-###
-# Need this so the prompt will work.
-
-setopt prompt_subst
-
-###
-# Set Color
-
-autoload colors zsh/terminfo
-if [[ "$terminfo[colors]" -ge 8 ]]; then
-	colors
-fi
-for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
-eval PR_$color='%{$terminfo[bold]$fg[${(L)color}]%}'
-eval PR_LIGHT_$color='%{$fg[${(L)color}]%}'
-(( count = $count + 1 ))
-done
-PR_NO_COLOUR="%{$terminfo[sgr0]%}"
-
-###
-# See if we can use extended characters to look nicer.
-
-typeset -A altchar
-set -A altchar ${(s..)terminfo[acsc]}
-PR_SET_CHARSET="%{$terminfo[enacs]%}"
-PR_SHIFT_IN="%{$terminfo[smacs]%}"
-PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
-PR_HBAR=" "
-PR_ULCORNER=""
-PR_LLCORNER=""
-PR_LRCORNER=""
-PR_URCORNER=""
-
-###
-# Decide if we need to set titlebar text.
-
-case $TERM in
-	xterm*)
-	PR_TITLEBAR=$'%{\e]0;%(!.-=*[ROOT]*=- | .)%n@%m:%~ | ${COLUMNS}x${LINES} | %y\a%}'
-;;
-	screen)
-	PR_TITLEBAR=$'%{\e_screen \005 (\005t) | %(!.-=[ROOT]=- | .)%n@%m:%~ | ${COLUMNS}x${LINES} | %y\e\\%}'
-;;
-	*)
-	PR_TITLEBAR=''
-;;
-esac
-
-###
-# Decide whether to set a screen title
-if [[ "$TERM" == "screen" ]]; then
-	PR_STITLE=$'%{\ekzsh\e\\%}'
-else
-	PR_STITLE=''
-fi
-
-###
-# APM detection
-
-if which ibam > /dev/null; then
-	PR_APM="$PR_RED${${PR_APM_RESULT[(f)1]}[(w)-2]}%%(${${PR_APM_RESULT[(f)3]}[(w)-1]})$PR_LIGHT_BLUE:"
-elif which apm > /dev/null; then
-	PR_APM="$PR_RED${PR_APM_RESULT[(w)5,(w)6]/\% /%%}$PR_LIGHT_BLUE:"
-else
-	PR_APM=""
-fi
-
-###
-# PROMPT
-
-PROMPT="$PR_SET_CHARSET$PR_STITLE${(e)PR_TITLEBAR}\
-$PR_GREEN%(!.%SROOT%s.%n)$PR_GREEN@%m:%l\
-$PR_BLUE)$PR_SHIFT_IN$PR_HBAR$PR_CYAN$PR_HBAR${(e)PR_FILLBAR}$PR_BLUE$PR_HBAR$PR_SHIFT_OUT(\
-$PR_MAGENTA%$PR_PWDLEN<...<%~%<<\
-
-%(?..$PR_LIGHT_RED%?$PR_BLUE:)\
-${(e)PR_APM}$PR_YELLOW%D{%H:%M}\
-$PR_LIGHT_BLUE:%(!.$PR_RED.$PR_WHITE)%#$PR_BLUE)\
-$PR_NO_COLOUR "
-
-###
-# Continuation PROMPT
-
-PS2="$PR_LIGHT_GREEN%_$PR_BLUE)$PR_SHIFT_IN$PR_HBAR$PR_SHIFT_OUT$PR_CYAN$PR_SHIFT_IN$PR_HBAR$PR_SHIFT_OUT$PR_NO_COLOUR "
-}
-
-setprompt
-alias ls='ls --color=auto'
-alias ll='ls -alF'
-</pre>
-                                    </blockquote>
-                                    <div class="description">
-                                        <h2>omniavinco<small>zshrc</small></h2>
-                                        <div class="rating" data-role="rating" data-param-rating="2"></div>
-                                    </div>
-                                </div>
-
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Script Area Start -->
-        <script src="/static/js/carousel.js" type="application/javascript"></script>
-        <script src="/static/js/rating.js" type="application/javascript"></script>
-        <!-- Script Area End -->
-    </body>
-</html>
+{% endblock contents %}
+
