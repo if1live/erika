@@ -22,8 +22,9 @@ login_manager.setup_app(app)
 @login_manager.user_loader
 def load_user(id):
     from user.models import User
-    return User('asd')
-    #return User.get(id)
+    from common import db
+    return db.session.query(User).filter(User.id==id).first()
+
 
 if __name__ == "__main__":
     # set view

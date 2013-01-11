@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Stylesheet Area Start -->
-        <link href="/static/css/modern.css" rel="stylesheet" type="text/css" />
-        <link href="/static/css/modern-responsive.css" rel="stylesheet" type="text/css" />
-        <link href="/static/css/site.css" rel="stylesheet" type="text/css" />
+{% extends "common/base.html" %}
+{% set jsComponents = ['carousel', 'rating'] %}
+{% set slideFeature = [{'title':'Sync your Configuration', 'backgrounColor':'green', 'content':'''You can sync own configuration files for editor(e.g. emacs, vim... e.t.c.) or shell.<i class="fg-color-white place-right icon-cloud" style="font-size: 42pt"></i><br /><br /><br />'''},{'title':'Share it', 'backgrounColor':'red', 'content':'''Share configuration with others'''}] %}
+{% block customStylesheet %}
         <style type="text/css">
             #iconic-features:last-child {
                 margin-bottom: 0;
@@ -34,33 +29,9 @@
                 height: 95px;
             }
         </style>
-        <!-- Stylesheet Area End -->
-        <!-- Script Area Start -->
-        <script src="/static/js/jquery-1.8.3.min.js" type="application/javascript"></script>
-        <!-- Script Area End -->
-        <title>Project Erika</title>
-    </head>
-    <body class="modern-ui">
-        <div class="page">
-            <div class="nav-bar">
-                <div class="nav-bar-inner padding10">
-                    <span class="pull-menu"></span>
-                    <a href="/template/">
-                        <span class="element brand"> 
-                            <img class="place-left" src="/static/img/logo32.png" width=32 height=32 alt="Erika" />
-                            Project Erika <small>{{ version }}</small>
-                        </span>
-                    </a>
-                    <div class="divider"></div>
-                    <ul class="menu">
-                        <li><a href="/">home</a></li>
-                        <li><a href="/login">login</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="blank-line-15"></div>
-        <div class="page secondary">
+{% endblock customStylesheet %}
+{% block title %}Project Erika{% endblock title %}
+{% block contents %}
             <div class="grid">
                 <div class="row">
                     <div class="span8">
@@ -68,18 +39,14 @@
                             <h2>Project Erika</h2>
                             <div id="specSlide" class="carousel" data-role="carousel" data-param-duration="200">
                                 <div class="slides">
+                                    {% for item in slideFeature %}
                                     <div class="slide">
-                                        <h2>Sync your Configuration</h2>
-                                        <p class="bg-color-green fg-color-white padding20">
-                                            You can sync own configuration files for editor(e.g. emacs, vim... e.t.c.) or shell.
-                                            <i class="fg-color-white place-right icon-cloud" style="font-size: 42pt"></i>
-                                            <br /><br /><br />
+                                        <h2>{{ item['title'] }}</h2>
+                                        <p class="bg-color-{{ item['backgrounColor'] }} fg-color-white padding20">
+                                            {{ item['content'] }}
                                         </p>
                                     </div>
-                                    <div class="slide">
-                                        <h2>Share it</h2>
-                                        <p class="bg-color-red fg-color-white padding20">Share configuration with others</p>
-                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -87,7 +54,16 @@
                     <div class="span4">
                         <div id="joinBlock" class="hero-unit text-center padding30">
                             <div class="blank-line-15"></div>
-                            <h2>JOIN NOW</h2>
+                            
+                            <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
+                            {% if current_user.is_authenticated() %}
+                            <!-- FIXTPL -->
+                            <dl>
+                                <dt>Nick</dt><dd>{{ current_user.name }}</dd>
+                                <dt>Provider</dt><dd>{{ current_user.provider }}</dd>
+                            </dl>
+                            <a href="/user/logout">Logout</a>
+                            {% else %}
                             <form action="/user/login/github" method="post">
                                 <div class="input-control text">
                                     <input type="text" name="userid" placeholder="ID" />
@@ -96,52 +72,46 @@
                                     <input type="password" name="passwd" placeholder="password" />
                                 </div>
                                 <div class="input-control text">
-                                    <button class="action-only-button" type="submit"><h1><i class="icon-arrow-right-3 fg-color-green"></i></h1></button>
+                                    <button class="action-only-button" type="submit">
+                                        <h1><i class="icon-arrow-right-3 fg-color-green"></i></h1>
+                                    </button>
                                 </div>
                             </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div id="iconic-features" class="span4">
                         <div class="tile double">
+                            {{ smallFeature1 }}
                         </div>
                         <div class="tile double">
+                            {{ smallFeature2 }}
                         </div>
                         <div class="tile double">
+                            {{ smallFeature3 }}
                         </div>
                     </div>
                     <div class="span8">
                         <div id="codesample" class="carousel" data-role="carousel" data-param-effect="slide" data-param-direction="right" data-param-duraion="300000" data-param-period="4000" data-param-stop="on" data-param-markers="off">
                             <div class="slides">
+                                {% for item in sampleCode %}
                                 <div class="slide">
                                     <blockquote>
-    set et<br />
-    set ts=4
+                                        <pre>{{ item.code }}</pre>
                                     </blockquote>
                                     <div class="description">
-                                        <h2>if1live<small>vimrc</small></h2>
-                                        <div class="rating" data-role="rating" data-param-rating="2"></div>
+                                        <h2>{{ item.owner }}<small>{{ item.type }}</small></h2>
+                                        <div class="rating" data-role="rating" data-param-rating="{{ item.rating }}"></div>
                                     </div>
                                 </div>
-                                <div class="slide">
-                                    <blockquote>
-                                    </blockquote>
-                                    <div class="description">
-                                        <h2>omniavinco<small>zshrc</small></h2>
-                                        <div class="rating" data-role="rating" data-param-rating="2"></div>
-                                    </div>
-                                </div>
-
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Script Area Start -->
-        <script src="/static/js/carousel.js" type="application/javascript"></script>
-        <script src="/static/js/rating.js" type="application/javascript"></script>
-        <!-- Script Area End -->
-    </body>
-</html>
+{% endblock contents %}
+
