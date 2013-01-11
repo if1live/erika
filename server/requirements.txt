@@ -1,0 +1,6 @@
+flask
+sqlalchemy
+flask-oauth
+jinja2
+flask-login
+psycopg2
