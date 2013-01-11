@@ -55,17 +55,28 @@
                         <div id="joinBlock" class="hero-unit text-center padding30">
                             <div class="blank-line-15"></div>
                             <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
-                            <form action="/join">
+                            {% if current_user.is_authenticated() %}
+                            <!-- FIXTPL -->
+                            <dl>
+                                <dt>Nick</dt><dd>{{ current_user.name }}</dd>
+                                <dt>Provider</dt><dd>{{ current_user.provider }}</dd>
+                            </dl>
+                            <a href="/user/logout">Logout</a>
+                            {% else %}
+                            <form action="/user/login/github" method="post">
                                 <div class="input-control text">
-                                    <input type="text" name="username" placeholder="ID" />
+                                    <input type="text" name="userid" placeholder="ID" />
                                 </div>
                                 <div class="input-control text">
-                                    <input type="password" name="password" placeholder="password" />
+                                    <input type="password" name="passwd" placeholder="password" />
                                 </div>
                                 <div class="input-control text">
-                                    <button class="action-only-button" type="submit"><h1><i class="icon-arrow-right-3 fg-color-green"></i></h1></button>
+                                    <button class="action-only-button" type="submit">
+                                        <h1><i class="icon-arrow-right-3 fg-color-green"></i></h1>
+                                    </button>
                                 </div>
                             </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

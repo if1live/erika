@@ -32,8 +32,16 @@
                     </a>
                     <div class="divider"></div>
                     <ul class="menu">
-                        <li><a href="/">home</a></li>
-                        <li><a href="/login">login</a></li>
+                        <li><a href="/">Home</a></li>
+                        {% if current_user.is_authenticated() %} 
+                        <li data-role="dropdown">
+                            <a href="#">User</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/user/profile">Profile</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/user/logout">Logout</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
