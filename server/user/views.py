@@ -19,30 +19,9 @@ from flask.ext.login import (
     confirm_login,
     fresh_login_required,
     )
-'''
-@blueprint.route('/')
-def index():
-    return render_template('common/base.html')
 
-@blueprint.route('/login/<name>', methods=['GET', 'POST'])
-def login(name):
-    #    if request.method == 'POST' and 'username' in request.form:
-    #       username = request.form['username']
-    u = User(1, 'myname', 'fdsf')
-    login_user(u, True)
-    print current_user()
-        
-    return 'login : %s' % name
+from common import db
 
-
-@blueprint.route('/logout')
-@login_required
-def logout():
-    #logout_user()
-    #flash('Log out')
-    return 'logout'
-#return redirect(url_for('index'))
-'''
 
 @blueprint.route("/")
 def index():
@@ -57,20 +36,52 @@ def secret():
 
 @blueprint.route("/login", methods=["GET", "POST"])
 def login():
-    from main import USERS, USER_NAMES
-
     if request.method == "POST" and "username" in request.form:
         username = request.form["username"]
-        if username in USER_NAMES:
-            remember = request.form.get("remember", "no") == "yes"
-            if login_user(USER_NAMES[username], remember=remember):
-                flash("Logged in!")
-                return redirect(request.args.get("next") or url_for("user.index"))
-            else:
-                flash("Sorry, but you could not log in.")
+        #if username in USER_NAMES:
+        remember = request.form.get("remember", "no") == "yes"
+        # force login
+        if login_user(User(1, 'asd'), remember=remember):
+            flash("Logged in!")
+            return redirect(request.args.get("next") or url_for("user.index"))
         else:
-            flash(u"Invalid username.")
+            flash("Sorry, but you could not log in.")
+        #else:
+        #    flash(u"Invalid username.")
     return render_template("user/login.html")
+
+@blueprint.route('/login/github', methods=['GET', 'POST'])
+def login():
+    if request.method in ('POST', 'GET') and 'userid' in request.form:
+        userid = request.form['userid']
+        passwd = request.form['passwd']
+
+        from user import auths
+        oauth = auths.GitHubOAuth(userid, passwd)
+        retval = oauth.create_auth()
+        if retval is True:
+            # 로그인 가능한 사용자면 db에 존재하는지 일단 확인하기
+            info = oauth.user_info()
+            
+            # 해당 서비스를 사용하는 유저가 이니 존재하는지 확인하기
+            from user.models import PROVIDER_GITHUB
+            user_obj = User.get_oauth_user(PROVIDER_GITHUB, info['id'])
+            if user_obj is None:
+                # 없으면 적절히 새로 만들기
+                user_obj = User(info['id'])
+                user_obj.provider = PROVIDER_GITHUB
+                user_obj.token = oauth.token
+                user_obj.provider_userid = unicode(info['id'])
+                db.session.add(user_obj)
+                db.session.commit()
+            
+            if login_user(user_obj, remember=True):
+                flash('Logged in')
+            else:
+                flash("Sorry, but you could not log in.")                
+        else:
+            flash(u'Invalid GitHub userid')
+    return redirect(url_for('common.index'))
 
 
 @blueprint.route("/reauth", methods=["GET", "POST"])
@@ -88,4 +99,5 @@ def reauth():
 def logout():
     logout_user()
     flash("Logged out.")
-    return redirect(url_for("user.index"))
+    return redirect(url_for("common.index"))
+
