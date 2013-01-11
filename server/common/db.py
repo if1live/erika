@@ -12,4 +12,4 @@ engine = create_engine(settings.SQLALCHEMY_DB_URI, echo=True)
 Model = declarative_base()
 
 Session = sessionmaker(bind=engine)
-session = Sesson()
+session = Session()
