@@ -30,6 +30,17 @@
             }
         </style>
 {% endblock customStylesheet %}
+{% block customHeadScript %}
+<script type="text/javascript">
+$(function() {
+    $('#navLogin').click(function() {
+        if ($('#loginNowMsg').length != 0) return false;
+        createReplyAlert($('#joinBlock > h2'), 'orange', {auth:'erika', text:'Login Here by GitHub'}, 'right', {x:40, y:30}).attr('id', 'loginNowMsg');
+        return false;
+    });
+});
+</script>
+{% endblock customHeadScript %}
 {% block title %}Project Erika{% endblock title %}
 {% block contents %}
             <div class="grid">
@@ -53,7 +64,6 @@
                     </div>
                     <div class="span4">
                         <div id="joinBlock" class="hero-unit text-center padding30">
-                            <div class="blank-line-15"></div>
                             <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
                             {% if current_user.is_authenticated() %}
                             <!-- FIXTPL -->
@@ -65,7 +75,7 @@
                             {% else %}
                             <form action="/user/login/github" method="post">
                                 <div class="input-control text">
-                                    <input type="text" name="userid" placeholder="ID" />
+                                    <input id="userid" type="text" name="userid" placeholder="ID" />
                                 </div>
                                 <div class="input-control text">
                                     <input type="password" name="passwd" placeholder="password" />
