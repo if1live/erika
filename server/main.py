@@ -42,8 +42,14 @@ if __name__ == "__main__":
 
         db.Model.metadata.create_all(db.engine)
 
+    def init_controller(app):
+        import common.controllers
+        import user.controllers
+        pass
+        
     init_view(app)
     init_db()
+    init_controller(app)
 
     app.run(host='0.0.0.0', port=8000)
 

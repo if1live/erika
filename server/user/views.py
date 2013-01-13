@@ -64,8 +64,9 @@ def login():
             info = oauth.user_info()
             
             # 해당 서비스를 사용하는 유저가 이니 존재하는지 확인하기
+            from user.controllers import UserController
             from user.models import PROVIDER_GITHUB
-            user_obj = User.get_oauth_user(PROVIDER_GITHUB, info['id'])
+            user_obj = UserController.get_github_user(info['id'])
             if user_obj is None:
                 # 없으면 적절히 새로 만들기
                 user_obj = User(info['login'])

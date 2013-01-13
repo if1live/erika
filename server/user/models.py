@@ -38,15 +38,6 @@ class User(UserMixin, db.Model):
     def is_active(self):
         return self.active
 
-    @classmethod
-    def get_oauth_user(cls, provider, user_code):
-        user_code = unicode(user_code)
-        q = db.session.query(cls).filter(
-            cls.provider==provider, cls.provider_userid==user_code
-            )
-        return q.first()
-
-
 class Anonymous(AnonymousUser):
     name = u'Anonymous'
 
