@@ -17,6 +17,7 @@ class GitHubOAuthTest(unittest.TestCase):
     def test_user_info(self):
         oauth = auths.GitHubOAuth(token=self.token)
         info = oauth.user_info()
+        #print info
         self.assertTrue(info['id'] > 0)
         self.assertEqual(True, info['success'])
 

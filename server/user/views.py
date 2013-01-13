@@ -68,11 +68,15 @@ def login():
             user_obj = User.get_oauth_user(PROVIDER_GITHUB, info['id'])
             if user_obj is None:
                 # 없으면 적절히 새로 만들기
-                user_obj = User(info['id'])
+                user_obj = User(info['login'])
                 user_obj.provider = PROVIDER_GITHUB
                 user_obj.token = oauth.token
                 user_obj.provider_userid = unicode(info['id'])
+                user_obj.github_user_info = info
                 db.session.add(user_obj)
+                db.session.commit()
+            else:
+                user_obj.token = oauth.token
                 db.session.commit()
             
             if login_user(user_obj, remember=True):
