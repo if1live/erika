@@ -1,0 +1,19 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>{{ current_user.name }}'s config list</h1>
+        <ul>
+            {% for conf in conf_list %}
+            <li><a href='/conf/view/{{current_user.name}}/{{conf.filetype}}'>{{ conf.filetype }}</a></li>
+            {% endfor %}
+            
+        </ul>
+        
+        <h2>Create new config</h2>
+        <form action='/conf/create/{{ current_user.name }}' method='get'>
+            <input type='text' name='filetype' value='.vimrc'/>
+            <input type='submit'/>
+        </form>
+    </body>
+</html>

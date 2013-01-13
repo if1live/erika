@@ -3,6 +3,7 @@
 from common.controllers import *
 from .models import *
 from common import db
+from sqlalchemy import func
 
 def validate_filetype(filetype):
     '''
@@ -32,18 +33,46 @@ class ConfigFileController(BaseController):
 
     @classmethod
     def get_config(cls, user_obj, filetype):
-        if validate_filetype(filetype) is False:
-            raise ValueError('%s / %s is NOT valid file type' % (user_obj.name, filetype))
-
-
         q = db.session.query(cls.M).filter(
             cls.M.user==user_obj,
             cls.M.filetype==filetype
             )
         return q.first()
 
+    @classmethod
+    def save(cls, user_obj, filetype, content, desc, parent=None):
+        if validate_filetype(filetype) is False:
+            return False
+        prev = cls.get_config(user_obj, filetype)
+        if prev is not None:
+            ConfigArchiveController.save_archive(prev)
+            db.session.delete(prev)
+
+        config = ConfigFile(filetype, user_obj, content, desc)
+        config.parent = parent
+        db.session.add(config)
+
+        db.session.commit()
+        
+
 class ConfigArchiveController(BaseController):
-    pass
+    @classmethod
+    def save_archive(cls, config_file):        
+        MAX_ARCHIVE = 100
+
+        q = db.session.query(cls.M).filter(cls.M.user==config_file.user)
+        if q.count() >= MAX_ARCHIVE:
+            prev_archive_list = q.order_by(cls.M.created_at).all()
+            if len(prev_archive_list) >= MAX_ARCHIVE:
+                prev = prev_archive_list.pop(0)
+                db.session.delete(prev)
+
+        archive = ConfigArchive(config_file.filetype, config_file.user, config_file.content)
+        db.session.add(archive)
+
+        db.session.commit()
+
+
 
 register_controller(ConfigFile, ConfigFileController)
 register_controller(ConfigArchive, ConfigArchiveController)

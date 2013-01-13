@@ -1,1 +1,20 @@
-create
+<html>
+<head>
+    <title>create conf</title>
+</head>
+<body>
+    <h1>Create</h1>
+    <dl>
+        <dt>Owner</dt><dd>{{ current_user.name }}</dd>
+        <dt>File Type</dt><dd>{{ filetype }}</dd>
+    </dl>
+    <form action='./{{ current_user.name }}' method='post'>
+        Content <textarea name='content' rows='20' cols='80'>{{ conf.content }}</textarea><br/>
+        Desc <textarea name='desc' rows='4' cols='80'>{{ conf.desc }}</textarea><br/>
+
+        <input type='hidden' name='filetype' value='{{ filetype }}'/>
+        <input type='submit'/>
+    </form>
+</body>
+</html>
+

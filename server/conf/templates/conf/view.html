@@ -1,0 +1,22 @@
+<html>
+    <head>
+    </heaml>
+    <body>
+        <h1>View 
+        <a href='/conf/view/{{ current_user.name }}'>{{ current_user.name }}</a>
+        / {{ filetype }}</h1>
+        <dl>
+            {% if conf.parent %}
+            <dt>Parent</dt><dd>{{ conf.parent.name }}</dd>
+            {% endif %}
+            <dt>created at</dt><dd>{{ conf.created_at }}</dd>
+        </dl>
+        <h2>Content</h2>
+        <p>{{ conf.content }}</p>
+        <h2>Desc</h2>
+        <p>{{ conf.desc }}</p>
+
+        <h2>Function</h2>
+        <a href='/conf/create/{{ current_user.name }}?filetype={{ filetype }}'>Edit</a>
+    </body>
+</html>

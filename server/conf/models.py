@@ -39,9 +39,9 @@ class ConfigArchive(db.Model):
     content = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
 
-    def __init__(self, config_file):
-        self.filetype = config_file.filetype
-        self.user = config_file.user
-        self.content = config_file.content
+    def __init__(self, filetype, user, content):
+        self.filetype = filetype
+        self.user = user
+        self.content = content
 
     
