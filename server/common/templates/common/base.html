@@ -14,7 +14,12 @@
         {% endblock headStylesheet %}
         {% block headScript %}
         <!-- Script Area Start -->
-        <script src="{{ url_for('static', filename='js/jquery-1.8.3.min.js') }}" type="application/javascript"></script>
+        {% set defaultJs = ['jquery-1.8.3.min', 'util'] %}
+        {% for item in defaultJs %}
+        <script src="{{ url_for('static', filename='js/%s.js' % item) }}" type="application/javascript"></script>
+        {% endfor %}
+        {% block customHeadScript %}
+        {% endblock customHeadScript %}
         <!-- Script Area End -->
         {% endblock headScript %}
         <title>{% block title %}{% endblock title %}{% block subtitle %}{% endblock subtitle %}</title>
@@ -32,9 +37,24 @@
                     </a>
                     <div class="divider"></div>
                     <ul class="menu">
-                        <li><a href="/">home</a></li>
-                        <li><a href="/login">login</a></li>
+                        <li><a href="/">Home</a></li>
                     </ul>
+                    {% if current_user.is_authenticated() %} 
+                    {% set jsComponents = jsComponents + ['dropdown'] %}
+                    <ul class="menu place-right">
+                        <li data-role="dropdown">
+                            <a href="#"><img src="{{current_user.profile['avatar_url']}}" width=32 height=32 />{{ current_user.profile['login'] }}</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/user/profile">Profile</a></li>
+                                <li><a href="/user/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    {% else %}
+                    <ul class="menu place-right">
+                        <li><a href="#" id="navLogin">Login NOW</a></li>
+                    </ul>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -45,7 +65,7 @@
         {% block lazyLoadScriptArea %}
         <!-- Script Area Start -->
         {% block componentScript %}
-            {% for item in jsComponents %}
+            {% for item in dict().fromkeys(jsComponents).keys() %}
             <script src="{{ url_for('static', filename='js/%s.js' % item) }}" type="application/javascript"></script>
             {% endfor %}
         {% endblock componentScript %}

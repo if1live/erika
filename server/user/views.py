@@ -21,7 +21,7 @@ from flask.ext.login import (
     )
 
 from common import db
-
+from user.controllers import *
 
 @blueprint.route("/")
 def index():
@@ -64,7 +64,6 @@ def login():
             info = oauth.user_info()
             
             # 해당 서비스를 사용하는 유저가 이니 존재하는지 확인하기
-            from user.controllers import UserController
             from user.models import PROVIDER_GITHUB
             user_obj = UserController.get_github_user(info['id'])
             if user_obj is None:

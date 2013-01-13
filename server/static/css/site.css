@@ -29,3 +29,10 @@ div [class^="blank-line-"] {
 #specSlide {
     height: 190px;
 }
+.replies-absolute {
+    position: absolute;
+}
+.replies > div .reply-text-only, .replies > li .reply-text-only, .replies > span .reply-text-only {
+    margin-left: 0px;
+    margin-top: 0px;
+}

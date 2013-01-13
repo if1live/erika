@@ -2,7 +2,7 @@
 
 from common.controllers import BaseController, register_controller
 from .models import *
-
+from common import db
 
 class UserController(BaseController):
     @classmethod
@@ -18,13 +18,16 @@ class UserController(BaseController):
         from user.models import PROVIDER_GITHUB
         return cls.get_oauth_user(PROVIDER_GITHUB, user_code)
 
+    @classmethod
+    def get_user(cls, username):
+        user_obj = db.session.query(cls.M).filter(
+            cls.M.name==username
+            ).first()
+        if user_obj is None:
+            raise ValueError('User %s is NOT Exist' % username)
+        else:
+            return user_obj
 
-class ConfigFileController(BaseController):
-    pass
 
-class ConfigArchiveController(BaseController):
-    pass
 
 register_controller(User, UserController)
-register_controller(ConfigFile, ConfigFileController)
-register_controller(ConfigArchive, ConfigArchiveController)

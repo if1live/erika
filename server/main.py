@@ -31,20 +31,24 @@ if __name__ == "__main__":
     def init_view(app):
         import common.views
         import user.views
+        import conf.views
         
         app.register_blueprint(common.views.blueprint)
         app.register_blueprint(user.views.blueprint)
+        app.register_blueprint(conf.views.blueprint)
 
     def init_db():
         from common import db
 
         import user.models
+        import conf.models
 
         db.Model.metadata.create_all(db.engine)
 
     def init_controller(app):
         import common.controllers
         import user.controllers
+        import conf.controllers
         pass
         
     init_view(app)
