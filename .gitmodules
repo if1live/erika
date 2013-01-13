@@ -1,0 +1,3 @@
+[submodule "server/static/CodeMirror"]
+	path = server/static/CodeMirror
+	url = https://github.com/omniavinco/CodeMirror.git
