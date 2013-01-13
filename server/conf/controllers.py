@@ -44,14 +44,19 @@ class ConfigFileController(BaseController):
         if validate_filetype(filetype) is False:
             return False
         prev = cls.get_config(user_obj, filetype)
+        config = ConfigFile(filetype, user_obj, content, desc)
+        config.parent = parent
+
+        # 일치하는 경우는 다시 저장할 이유가 없다
+        if prev is not None:
+            if prev.content == config.content and prev.desc == config.desc:
+                return
+
         if prev is not None:
             ConfigArchiveController.save_archive(prev)
             db.session.delete(prev)
 
-        config = ConfigFile(filetype, user_obj, content, desc)
-        config.parent = parent
         db.session.add(config)
-
         db.session.commit()
         
 
