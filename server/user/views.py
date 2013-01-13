@@ -72,7 +72,7 @@ def login():
                 user_obj.provider = PROVIDER_GITHUB
                 user_obj.token = oauth.token
                 user_obj.provider_userid = unicode(info['id'])
-                user_obj.github_user_info = info
+                user_obj.profile = info
                 db.session.add(user_obj)
                 db.session.commit()
             else:

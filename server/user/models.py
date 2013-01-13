@@ -28,7 +28,8 @@ class User(UserMixin, db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
 
-    github_user_info = db.Column(db.JSONEncodedDict)
+    # json 규격에 맞춰서 유저 정보를 적절히 저장하기
+    profile = db.Column(db.JSONEncodedDict)
 
     def __init__(self, name, email='', active=True):
         self.name = name
