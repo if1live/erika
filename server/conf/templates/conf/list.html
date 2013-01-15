@@ -20,8 +20,8 @@ $(function() {
 </script>
 {% endblock customHeadScript %}
 {% set jsComponents = ['rating'] %}
-{% set filetypeIconMap = {'.vimrc':'vim', '.emacs':'emacs'} %}
-{% set filetypeColorMap = {'.vimrc':'greenDark', '.emacs':'purple'} %}
+{% set filetypeIconMap = {'.vimrc':'vim', '.emacs':'emacs', '.zshrc':'zsh', '.bashrc':'bash'} %}
+{% set filetypeColorMap = {'.vimrc':'greenDark', '.emacs':'purple', '.zshrc':'purple', '.bashrc':'grayDark'} %}
 {% block title %}Project Erika{% endblock title %}
 {% block contents %}
     <div class="grid">
@@ -31,13 +31,13 @@ $(function() {
             </div>
         </div>
         <div class="row">
-            <div class="span8">
+            <div class="span12">
                 <ul class="listview fluid">
                 {% for conf in conf_list %}
-                    <li class="bg-color-{{ filetypeColorMap[conf.filetype] }}">
+                    <li class="bg-color-{{ filetypeColorMap[conf.filetype]|default("blue") }}">
                         <a href='/conf/view/{{current_user.name}}/{{conf.filetype}}'>
                             <div class="icon">
-                                <img src="{{ url_for('static', filename='icon/%s.png' % filetypeIconMap[conf.filetype]) }}" />
+                                <img src="{{ url_for('static', filename='icon/%s.png' % filetypeIconMap[conf.filetype]|default("default")) }}" />
                             </div>
                             <div class="data fg-color-darken">
                                 <h4>{{ conf.filetype }}</h4>
