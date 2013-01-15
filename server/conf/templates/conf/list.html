@@ -35,7 +35,7 @@ $(function() {
                 <ul class="listview fluid">
                 {% for conf in conf_list %}
                     <li class="bg-color-{{ filetypeColorMap[conf.filetype]|default("blue") }}">
-                        <a href='/conf/view/{{ conf.user }}/{{ conf.filetype }}'>
+                        <a href='/conf/view/{{ conf.user.name }}/{{ conf.filetype }}'>
                             <div class="icon">
                                 <img src="{{ url_for('static', filename='icon/%s.png' % filetypeIconMap[conf.filetype]|default("default")) }}" />
                             </div>
