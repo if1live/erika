@@ -22,6 +22,7 @@ def config_list(username):
     conf_list = ConfigFileController.get_config_list(user_obj)
     data = {
         'conf_list': conf_list,
+        'username': username
         }
     return render_template('conf/list.html', **data)
 

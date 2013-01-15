@@ -27,7 +27,7 @@ $(function() {
     <div class="grid">
         <div class="row">
             <div class="span8">
-                <h1>{{ current_user.name }}'s config list</h1>
+                <h1>{{ username }}'s config list</h1>
             </div>
         </div>
         <div class="row">
@@ -35,7 +35,7 @@ $(function() {
                 <ul class="listview fluid">
                 {% for conf in conf_list %}
                     <li class="bg-color-{{ filetypeColorMap[conf.filetype]|default("blue") }}">
-                        <a href='/conf/view/{{current_user.name}}/{{conf.filetype}}'>
+                        <a href='/conf/view/{{ conf.user }}/{{ conf.filetype }}'>
                             <div class="icon">
                                 <img src="{{ url_for('static', filename='icon/%s.png' % filetypeIconMap[conf.filetype]|default("default")) }}" />
                             </div>

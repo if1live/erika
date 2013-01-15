@@ -75,7 +75,7 @@ $(function() {
             <div class="span12">
                 <div class="span8" style="height: 150px;">
                     <h1>View 
-                        <small><a href='/conf/view/{{ current_user.name }}'>{{ current_user.name }}</a> / {{ filetype }}</small>
+                        <small><a href='/conf/view/{{ conf.user }}'>{{ conf.user }}</a> / {{ filetype }}</small>
                     </h1>
                     <dl style="margin-top: 35px;">
                     {% if conf.parent %}
@@ -85,6 +85,7 @@ $(function() {
                         <dt>Rating</dt><dd><div class="rating" data-role="rating"></div></dd>
                     </dl>
                 </div>
+                {% if current_user.is_authenticated %}
                 <div class="span4">
                     <a href='/conf/create/{{ current_user.name }}?filetype={{ filetype }}'>
                         <div class="tile icon">
@@ -99,6 +100,7 @@ $(function() {
                         </div>
                     </a>
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="row">
