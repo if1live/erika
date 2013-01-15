@@ -6,6 +6,11 @@
 .CodeMirror {
     border: 1px solid #eee;
 }
+.CodeMirror div {
+    font-weight: normal;
+    font-size: 13px;
+    box-sizing: content-box;
+}
 .activeline {
     background: #e8f2ff !important;
 }
@@ -28,14 +33,14 @@ $(function() {
             option.extraKeys = {"Enter": "newlineAndIndentContinueMarkdownList"};
         }
         editor = CodeMirror.fromTextArea(this, option);
-        /*var hlLine = editor.addLineClass(0, "background", "activeline");
+        var hlLine = editor.addLineClass(0, "background", "activeline");
         editor.on("cursorActivity", function() {
             var cur = editor.getLineHandle(editor.getCursor().line);
             if (cur != hlLine) {
                 editor.removeLineClass(hlLine, "background", "activeline");
                 hlLine = editor.addLineClass(cur, "background", "activeline");
             }
-        });*/
+        });
     });
 });
 </script>

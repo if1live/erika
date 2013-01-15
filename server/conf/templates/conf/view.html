@@ -1,22 +1,114 @@
-<html>
-    <head>
-    </heaml>
-    <body>
-        <h1>View 
-        <a href='/conf/view/{{ current_user.name }}'>{{ current_user.name }}</a>
-        / {{ filetype }}</h1>
-        <dl>
-            {% if conf.parent %}
-            <dt>Parent</dt><dd>{{ conf.parent.name }}</dd>
-            {% endif %}
-            <dt>created at</dt><dd>{{ conf.created_at }}</dd>
-        </dl>
-        <h2>Content</h2>
-        <p>{{ conf.content }}</p>
-        <h2>Desc</h2>
-        <p>{{ conf.desc }}</p>
-
-        <h2>Function</h2>
-        <a href='/conf/create/{{ current_user.name }}?filetype={{ filetype }}'>Edit</a>
-    </body>
-</html>
+{% extends "common/base.html" %}
+{% block customStylesheet %}
+<link href="{{ url_for('static', filename='CodeMirror/lib/codemirror.css') }}" type="text/css" rel="stylesheet" />
+<link href="{{ url_for('static', filename='CodeMirror/theme/solarized.css') }}" type="text/css" rel="stylesheet" />
+<style type="text/css">
+.CodeMirror {
+    border: 1px solid #eee;
+}
+.CodeMirror div {
+    font-weight: normal;
+    font-size: 13px;
+    box-sizing: content-box;
+}
+.activeline {
+    background: #e8f2ff !important;
+}
+.span8 { width: 600px; }
+.span4 { width: 320px; }
+dl dt {
+    margin: 0 2px 0 20px;
+    float: left;
+    font-size: 26px
+}
+dl dt:first-child {
+    margin-left: 0;
+}
+dl dd {
+    float: left;
+    margin: 0 0 0 5px;
+    font-size: 26px;
+}   
+small a {
+    font-size: 75%;
+}
+.rating {
+    height: 12px;
+    margin-bottom: 2px;
+}
+ul:nth-child(1) {
+    margin-left: 0;
+}
+.data p {
+    font-weight: bold;
+}
+</style>
+{% endblock customStylesheet %}
+{% block customHeadScript %}
+<script src="{{ url_for('static', filename='CodeMirror/lib/codemirror.js') }}" type="application/javascript"></script>
+<script src="{{ url_for('static', filename='CodeMirror/lib/runmode.js') }}" type="application/javascript"></script>
+<script src="{{ url_for('static', filename='CodeMirror/addon/edit/continuelist.js') }}" type="application/javascript"></script>
+<script src="{{ url_for('static', filename='CodeMirror/mode/markdown/markdown.js') }}" type="application/javascript"></script>
+<script type="text/javascript">
+$(function() {
+    $('textarea').each(function(){
+        option = {
+            lineWrapping: true,
+            readOnly: true,
+            theme: "solarized light"
+        };
+        if (this.name == "desc") {
+            option.mode = "markdown";
+            option.extraKeys = {"Enter": "newlineAndIndentContinueMarkdownList"};
+        } else if (this.name == "content") {
+            option.lineNumbers = true;
+        }
+        editor = CodeMirror.fromTextArea(this, option);
+    });
+});
+</script>
+{% endblock customHeadScript %}
+{% set jsComponents = ['rating'] %}
+{% block contents %}
+    <div class="grid">
+        <div class="row">
+            <div class="span12">
+                <div class="span8" style="height: 150px;">
+                    <h1>View 
+                        <small><a href='/conf/view/{{ current_user.name }}'>{{ current_user.name }}</a> / {{ filetype }}</small>
+                    </h1>
+                    <dl style="margin-top: 35px;">
+                    {% if conf.parent %}
+                        <dt>Parent</dt><dd>{{ conf.parent.name }}</dd>
+                    {% endif %}
+                        <dt><i class="icon-clock"></i></dt><dd>{{ conf.created_at.strftime("%b %d, %y")  }}</dd>
+                        <dt>Rating</dt><dd><div class="rating" data-role="rating"></div></dd>
+                    </dl>
+                </div>
+                <div class="span4">
+                    <a href='/conf/create/{{ current_user.name }}?filetype={{ filetype }}'>
+                        <div class="tile icon">
+                            <div class="tile-content">
+                                <i class="icon-wrench"></i>
+                            </div>
+                        </div>
+                        <div class="tile icon">
+                            <div class="tile-content">
+                                <i class="icon-tree-view"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <h2>Content</h2>
+                <textarea name="content">{{ conf.content }}</textarea>
+            </div>
+            <div class="span4">
+                <h2>Desc</h2>
+                <textarea name="desc">{{ conf.desc }}</textarea>
+            </div>
+        </div>
+{% endblock contents %}
