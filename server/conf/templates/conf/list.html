@@ -1,19 +1,60 @@
-<html>
-    <head>
-    </head>
-    <body>
-        <h1>{{ current_user.name }}'s config list</h1>
-        <ul>
-            {% for conf in conf_list %}
-            <li><a href='/conf/view/{{current_user.name}}/{{conf.filetype}}'>{{ conf.filetype }}</a></li>
-            {% endfor %}
-            
-        </ul>
-        
+{% extends "common/base.html" %}
+{% block customStylesheet %}
+<style type="text/css">
+.rating {
+    height: 12px;
+    margin-bottom: 2px;
+}
+ul:nth-child(1) {
+    margin-left: 0;
+}
+.data p {
+    font-weight: bold;
+}
+</style>
+{% endblock customStylesheet %}
+{% block customHeadScript %}
+<script type="text/javascript">
+$(function() {
+});
+</script>
+{% endblock customHeadScript %}
+{% set jsComponents = ['rating'] %}
+{% set filetypeIconMap = {'.vimrc':'vim', '.emacs':'emacs'} %}
+{% set filetypeColorMap = {'.vimrc':'greenDark', '.emacs':'purple'} %}
+{% block title %}Project Erika{% endblock title %}
+{% block contents %}
+    <div class="grid">
+        <div class="row">
+            <div class="span8">
+                <h1>{{ current_user.name }}'s config list</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                <ul class="listview fluid">
+                {% for conf in conf_list %}
+                    <li class="bg-color-{{ filetypeColorMap[conf.filetype] }}">
+                        <a href='/conf/view/{{current_user.name}}/{{conf.filetype}}'>
+                            <div class="icon">
+                                <img src="{{ url_for('static', filename='icon/%s.png' % filetypeIconMap[conf.filetype]) }}" />
+                            </div>
+                            <div class="data fg-color-darken">
+                                <h4>{{ conf.filetype }}</h4>
+                                <div class="rating small" data-role="rating" data-param-vote="off" data-param-rating="3">
+                                </div>
+                                <p class="fg-color-black">{{ conf.desc }}</p>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
         <h2>Create new config</h2>
         <form action='/conf/create/{{ current_user.name }}' method='get'>
             <input type='text' name='filetype' value='.vimrc'/>
             <input type='submit'/>
         </form>
-    </body>
-</html>
+{% endblock contents %}
+
