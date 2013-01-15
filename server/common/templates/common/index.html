@@ -64,15 +64,20 @@ $(function() {
                     </div>
                     <div class="span4">
                         <div id="joinBlock" class="hero-unit text-center padding30">
-                            <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
                             {% if current_user.is_authenticated() %}
-                            <!-- FIXTPL -->
+                            <br />
+                            <h2>{{ current_user.name }}</h2>
                             <dl>
-                                <dt>Nick</dt><dd>{{ current_user.name }}</dd>
-                                <dt>Provider</dt><dd>{{ current_user.provider }}</dd>
+                                <dt><i class="icon-mail"></i></dt>
+                                <dd>{{ current_user.profile.email }}</dd>
+                                <dt><i class="icon-clock"></i></dt>
+                                <dd>Joined on {{ current_user.created_at.strftime("%b %d, %y") }}</dd>
+                                <dt>by</dt>
+                                <dd>{{ current_user.provider }}</dd>
                             </dl>
-                            <a href="/user/logout">Logout</a>
+                            <a href="/user/logout"><h3><i class="icon-exit"></i>Logout</h3></a>
                             {% else %}
+                            <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
                             <form action="/user/login/github" method="post">
                                 <div class="input-control text">
                                     <input id="userid" type="text" name="userid" placeholder="ID" />

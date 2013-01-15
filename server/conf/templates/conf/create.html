@@ -1,20 +1,64 @@
-<html>
-<head>
-    <title>create conf</title>
-</head>
-<body>
+{% extends "common/base.html" %}
+{% block customStylesheet %}
+<link href="{{ url_for('static', filename='CodeMirror/lib/codemirror.css') }}" type="text/css" rel="stylesheet" />
+<link href="{{ url_for('static', filename='CodeMirror/theme/solarized.css') }}" type="text/css" rel="stylesheet" />
+<style type="text/css">
+.CodeMirror {
+    border: 1px solid #eee;
+}
+.activeline {
+    background: #e8f2ff !important;
+}
+</style>
+{% endblock customStylesheet %}
+{% block customHeadScript %}
+<script src="{{ url_for('static', filename='CodeMirror/lib/codemirror.js') }}" type="application/javascript"></script>
+<script src="{{ url_for('static', filename='CodeMirror/addon/edit/continuelist.js') }}" type="application/javascript"></script>
+<script src="{{ url_for('static', filename='CodeMirror/mode/markdown/markdown.js') }}" type="application/javascript"></script>
+<script type="text/javascript">
+$(function() {
+    $('textarea').each(function(){
+        option = {
+            lineNumbers: true,
+            lineWrapping: true,
+            theme: "solarized light"
+        };
+        if (this.name == "desc") {
+            option.mode = "markdown";
+            option.extraKeys = {"Enter": "newlineAndIndentContinueMarkdownList"};
+        }
+        editor = CodeMirror.fromTextArea(this, option);
+        /*var hlLine = editor.addLineClass(0, "background", "activeline");
+        editor.on("cursorActivity", function() {
+            var cur = editor.getLineHandle(editor.getCursor().line);
+            if (cur != hlLine) {
+                editor.removeLineClass(hlLine, "background", "activeline");
+                hlLine = editor.addLineClass(cur, "background", "activeline");
+            }
+        });*/
+    });
+});
+</script>
+{% endblock customHeadScript %}
+{% block title %}Project Erika{% endblock title %}
+{% block contents %}
     <h1>Create</h1>
     <dl>
         <dt>Owner</dt><dd>{{ current_user.name }}</dd>
         <dt>File Type</dt><dd>{{ filetype }}</dd>
     </dl>
     <form action='./{{ current_user.name }}' method='post'>
-        Content <textarea name='content' rows='20' cols='80'>{{ conf.content }}</textarea><br/>
-        Desc <textarea name='desc' rows='4' cols='80'>{{ conf.desc }}</textarea><br/>
+        <div>
+            <h3>Content</h3>
+            <textarea name='content'>{{ conf.content }}</textarea>
+        </div>
+        <div>
+            <h3>Desc</h3>
+            <textarea name='desc'>{{ conf.desc }}</textarea>
+        </div>
 
         <input type='hidden' name='filetype' value='{{ filetype }}'/>
         <input type='submit'/>
     </form>
-</body>
-</html>
+{% endblock contents %}
 

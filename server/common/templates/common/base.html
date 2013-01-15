@@ -15,13 +15,25 @@
         {% block headScript %}
         <!-- Script Area Start -->
         {% set defaultJs = ['jquery-1.8.3.min', 'util'] %}
-        {% for item in defaultJs %}
+        {% for item in dict().fromkeys(defaultJs).keys() %}
         <script src="{{ url_for('static', filename='js/%s.js' % item) }}" type="application/javascript"></script>
         {% endfor %}
+        <script type="text/javascript">
+            $(function() {
+                $('#configSearch').submit(function() {
+                    location.href = '/conf/search/' + $('#configSearch input[name="terms"]').val();
+                   });
+                $('#configSearch').parent().off('click').click(function(){return false;});
+                $('#configSearch button').click(function(){$('#configSearch').submit();});
+            });
+        </script>
         {% block customHeadScript %}
         {% endblock customHeadScript %}
         <!-- Script Area End -->
         {% endblock headScript %}
+        {% if jsComponents is not defined %}
+        {% set jsComponents = [] %}
+        {% endif %}
         <title>{% block title %}{% endblock title %}{% block subtitle %}{% endblock subtitle %}</title>
     </head>
     <body class="modern-ui">
@@ -38,12 +50,32 @@
                     <div class="divider"></div>
                     <ul class="menu">
                         <li><a href="/">Home</a></li>
+                        {% if current_user.is_authenticated() %} 
+                        <li data-role="dropdown">
+                            <a href="#">
+                                Configs
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/conf/view/{{ current_user.name }}">lists</a>
+                                <li><a href="/conf/create/{{ current_user.name }}">Create</a></li>
+                                <li class="divider"></li>
+                                <li>
+                                    <form id="configSearch">
+                                        <div class="input-control text" style="margin-bottom: 0;">
+                                            <input name="terms" type="text" placeholder="Search" />
+                                            <button type="submit" class="btn-search"></button>
+                                        </div>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
                     </ul>
                     {% if current_user.is_authenticated() %} 
                     {% set jsComponents = jsComponents + ['dropdown'] %}
-                    <ul class="menu place-right">
+                    <ul id="navUserItem" class="menu place-right">
                         <li data-role="dropdown">
-                            <a href="#"><img src="{{current_user.profile['avatar_url']}}" width=32 height=32 />{{ current_user.profile['login'] }}</a>
+                            <a href="#"><img src="{{current_user.profile['avatar_url']}}" width=20 height=20 />{{ current_user.profile['login'] }}</a>
                             <ul class="dropdown-menu">
                                 <li><a href="/user/profile">Profile</a></li>
                                 <li><a href="/user/logout">Logout</a></li>

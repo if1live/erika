@@ -26,6 +26,20 @@ div [class^="blank-line-"] {
 #joinBlock {
     height: 300px;
 }
+#joinBlock dl > dt, #joinBlock dl > dd {
+    line-height: 1.4em;
+}
+#joinBlock dl dt {
+    margin: 0;
+    float: left;
+    width: 25px;
+    clear: left;
+}
+#joinBlock dl dd {
+    width: 200px;
+    font-size: 12pt;
+    margin-left: 25px;
+}
 #specSlide {
     height: 190px;
 }
@@ -35,4 +49,8 @@ div [class^="blank-line-"] {
 .replies > div .reply-text-only, .replies > li .reply-text-only, .replies > span .reply-text-only {
     margin-left: 0px;
     margin-top: 0px;
+}
+#navUserItem img{
+    margin-bottom: -5px;
+    margin-right: 5px;
 }
