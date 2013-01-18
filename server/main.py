@@ -29,6 +29,10 @@ def load_user(id):
 if __name__ == "__main__":
     # set view
     def init_view(app):
+        from flask import url_for
+        import os
+        from flask import send_from_directory
+
         import common.views
         import user.views
         import conf.views
@@ -36,6 +40,11 @@ if __name__ == "__main__":
         app.register_blueprint(common.views.blueprint)
         app.register_blueprint(user.views.blueprint)
         app.register_blueprint(conf.views.blueprint)
+
+        @app.route('/favicon.ico')
+        def favicon():
+            return send_from_directory(os.path.join(app.root_path, 'static'),
+                                       'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
     def init_db():
         from common import db
@@ -56,5 +65,7 @@ if __name__ == "__main__":
     init_controller(app)
 
     app.run(host='0.0.0.0', port=8000)
+
+
 
 
