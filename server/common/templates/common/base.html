@@ -8,16 +8,21 @@
         <link href="{{ url_for('static', filename='css/modern.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ url_for('static', filename='css/modern-responsive.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ url_for('static', filename='css/ui-lightness/jquery-ui-1.10.0.custom.min.css') }}" rel="stylesheet" type="text/css"/>
         {% block customStylesheet %}
         {% endblock customStylesheet %}
         <!-- Stylesheet Area End -->
         {% endblock headStylesheet %}
         {% block headScript %}
         <!-- Script Area Start -->
-        {% set defaultJs = ['jquery-1.8.3.min', 'util'] %}
+        {% set defaultJs = ['jquery-1.8.3.min', 'util', 'jquery-ui-1.10.0.custom.min'] %}
         {% for item in dict().fromkeys(defaultJs).keys() %}
         <script src="{{ url_for('static', filename='js/%s.js' % item) }}" type="application/javascript"></script>
         {% endfor %}
+
+        <!-- generated js -->
+        <script src="/common/common.js" type="application/javascript"></script>
+
         <script type="text/javascript">
             $(function() {
                 $('#configSearch').submit(function() {
@@ -62,7 +67,7 @@
                                 <li>
                                     <form id="configSearch">
                                         <div class="input-control text" style="margin-bottom: 0;">
-                                            <input name="terms" type="text" placeholder="Search" />
+                                            <input class="filetype_autocomplete" name="terms" type="text" placeholder="Search" />
                                             <button type="submit" class="btn-search"></button>
                                         </div>
                                     </form>

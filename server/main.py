@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from flask import Flask
+from flask import Flask, render_template
 import settings
 
 app = Flask(__name__)
@@ -40,6 +40,10 @@ if __name__ == "__main__":
         app.register_blueprint(common.views.blueprint)
         app.register_blueprint(user.views.blueprint)
         app.register_blueprint(conf.views.blueprint)
+
+        @app.route('/')
+        def index():
+            return render_template('common/index.html')
 
         @app.route('/favicon.ico')
         def favicon():
