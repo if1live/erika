@@ -106,11 +106,15 @@ $(function() {
         <div class="row">
             <div class="span8">
                 <h2>Content</h2>
-                <textarea name="content">{{ conf.content }}</textarea>
+                <p>
+                    <pre>{{ conf.content }}</pre>
+                </p>
             </div>
             <div class="span4">
                 <h2>Desc</h2>
-                <textarea name="desc">{{ conf.desc }}</textarea>
+                {% autoescape False %}
+                {{ markdown_desc }}
+                {% endautoescape %}
             </div>
         </div>
 {% endblock contents %}

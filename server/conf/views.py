@@ -10,6 +10,7 @@ from flask import (
 from .models import *
 from .controllers import *
 from user.controllers import *
+from markdown import markdown
 
 @blueprint.route('/view/<username>')
 @blueprint.errorhandler(404)
@@ -39,6 +40,7 @@ def view_config(username, filetype):
         data = {
             'filetype' : filetype,
             'conf' : config,
+            'markdown_desc' : markdown(config.desc),
             }
         return render_template('conf/view.html', **data)
 
