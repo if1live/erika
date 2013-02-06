@@ -27,7 +27,6 @@ google = oauth.remote_app(
     consumer_secret=settings.GOOGLE_CLIENT_SECRET
     )
 
-# Use Twitter as example remote application
 twitter = oauth.remote_app(
     'twitter',
     base_url='https://api.twitter.com/1/',
@@ -38,6 +37,18 @@ twitter = oauth.remote_app(
     consumer_secret=settings.TWITTER_CONSUMER_SECRET,
     )
 
+github = oauth.remote_app(
+    'github',
+    base_url='https://github.com/login/oauth/',
+    authorize_url='https://github.com/login/oauth/authorize',
+    request_token_url=None,
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_method='POST',
+    consumer_key=settings.GITHUB_CLIENT_ID,
+    consumer_secret=settings.GITHUB_CLIENT_SECRET,
+    )
+
+
 @google.tokengetter
 def get_access_token():
     return session.get(constants.KEY_GOOGLE_OAUTH_TOKEN)
@@ -45,6 +56,10 @@ def get_access_token():
 @twitter.tokengetter
 def get_twitter_token():
     return session.get(constants.KEY_TWITTER_OAUTH_TOKEN)
+
+@github.tokengetter
+def get_github_token():
+    return session.get(constants.KEY_GITHUB_OAUTH_TOKEN)
 
 
 """

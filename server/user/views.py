@@ -22,7 +22,7 @@ from flask.ext.login import (
 
 from common import db
 from user.controllers import *
-from auths import twitter, google
+from auths import twitter, google, github
 import constants
 
 
@@ -129,6 +129,24 @@ def authorized_google(resp):
             return 'Not valid User?'
     else:
         return oauth_signup(info, next_url)
+
+@blueprint.route('/login/github')
+def login_github():
+    logout_user()
+    del_token_session()
+
+    # google oauth의 경우, url에 추가 정보를 달아놓으면
+    # URL에서 에러를 뱉는다. 그래서 next를 따로 세션에 넣어놧다가 꺼내서 쓰자
+    next_url = request.args.get('next') or request.referrer or None
+    callback = url_for('.authorized_github', _next=next_url)
+    return github.authorize(callback=callback)
+
+@blueprint.route('/authorized/github')
+@github.authorized_handler
+def authorized_github(resp):
+    print 'resp'
+    return 'fdsf'
+
 
 def oauth_signup(info, next_url):
     name = UserController.get_valid_name(info.name)
