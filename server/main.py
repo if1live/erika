@@ -4,27 +4,7 @@ from flask import Flask, render_template
 import settings
 
 app = Flask(__name__)
-app.debug = settings.DEBUG
-app.secret_key = settings.APP_SECRET_KEY
-
-from flask.ext.login import LoginManager
-#from user.models import Anonymous
-
-login_manager = LoginManager()
-
-login_manager.login_view = "user.login"
-login_manager.logout_view = 'user.logout'
-login_manager.login_message = u"Please log in to access this page."
-login_manager.refresh_view = "user.reauth"
-
-login_manager.setup_app(app)
-
-@login_manager.user_loader
-def load_user(id):
-    from user.models import User
-    from common import db
-    return db.session.query(User).filter(User.id==id).first()
-
+app.config.from_object(settings)
 
 if __name__ == "__main__":
     # set view
@@ -63,9 +43,12 @@ if __name__ == "__main__":
         import user.controllers
         import conf.controllers
         pass
-        
-    init_view(app)
+
+    import user
+    user.init_login(app)
+
     init_db()
+    init_view(app)
     init_controller(app)
 
     app.run(host='0.0.0.0', port=8000)

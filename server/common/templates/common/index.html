@@ -69,7 +69,7 @@ $(function() {
                             <h2>{{ current_user.name }}</h2>
                             <dl>
                                 <dt><i class="icon-mail"></i></dt>
-                                <dd>{{ current_user.profile.email }}</dd>
+                                <dd>{{ current_user.email }}</dd>
                                 <dt><i class="icon-clock"></i></dt>
                                 <dd>Joined on {{ current_user.created_at.strftime("%b %d, %y") }}</dd>
                                 <dt>by</dt>
@@ -77,6 +77,12 @@ $(function() {
                             </dl>
                             <a href="/user/logout"><h3><i class="icon-exit"></i>Logout</h3></a>
                             {% else %}
+                            <h2><a href="{{ url_for('user.login_twitter') }}">
+				    LOGIN by Twitter
+			    </a></h2>
+                            <h2><a href="{{ url_for('user.login_google') }}">
+				    LOGIN by Google
+			    </a></h2>
                             <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
                             <form action="/user/login/github" method="post">
                                 <div class="input-control text">

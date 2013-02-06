@@ -80,7 +80,9 @@
                     {% set jsComponents = jsComponents + ['dropdown'] %}
                     <ul id="navUserItem" class="menu place-right">
                         <li data-role="dropdown">
-                            <a href="#"><img src="{{current_user.profile['avatar_url']}}" width=20 height=20 />{{ current_user.profile['login'] }}</a>
+			    <!-- avator가 모든 oauth에 대해서 지원하진 않는다-->
+			    <!--
+                            <a href="#"><img src="{current_user.profile['avatar_url']}" width=20 height=20 />{ current_user.profile['login'] }</a>-->
                             <ul class="dropdown-menu">
                                 <li><a href="/user/profile">Profile</a></li>
                                 <li><a href="/user/logout">Logout</a></li>

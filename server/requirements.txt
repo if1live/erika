@@ -5,3 +5,4 @@ jinja2
 flask-login
 psycopg2
 markdown
+nose

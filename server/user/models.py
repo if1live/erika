@@ -1,48 +1,69 @@
 #-*- coding: utf-8 -*-
 
 from flask.ext.login import (
-    AnonymousUser,
     UserMixin,
     LoginManager,
 )
-from main import login_manager
 from common import db
+from settings import DB_PREFIX as prefix
+from user import Anonymous
 
-import datetime
+class UserOAuth(db.Model):
+    __tablename__ = prefix + 'user_oauth'
+    __table_args__ = (
+        db.UniqueConstraint('provider', 'provider_uid'),
+        )
 
-PROVIDER_TWITTER = 'twitter'
-PROVIDER_GITHUB = 'github'
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, 
+                        db.ForeignKey(prefix + 'user.id',
+                                      ondelete='CASCADE'))
+    user = db.relationship('User')
+
+    provider = db.Column(db.String(15))
+    provider_uid = db.Column(db.String(31))
+    token = db.Column(db.String(255))
+
+    # auth 요청후 얻은 정보를 통째로 저장하기
+    extra = db.Column(db.JSONEncodedDict)
+
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.now())
+    
+    def __init__(self, provider='', provider_uid='', oauth_token='', extra=None):
+        self.provider = provider
+        self.provider_uid = provider_uid
+        self.token = oauth_token
+        
+        if extra is None:
+            extra = {}
+        self.extra = extra
+    
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'user'
+    __tablename__ = prefix + 'user'
     
     id = db.Column(db.Integer, primary_key=True)
     
     name = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255))
     active = db.Column(db.Boolean)
+    is_admin = db.Column(db.Boolean, default=False)
 
-    provider = db.Column(db.String(15))
-    token = db.Column(db.String(255))
-    provider_userid = db.Column(db.String(15))
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now)
-
-    # json 규격에 맞춰서 유저 정보를 적절히 저장하기
-    profile = db.Column(db.JSONEncodedDict)
-
-    def __init__(self, name, email='', active=True):
+    def __init__(self, name, email='', active=True, is_admin=False):
         self.name = name
         self.email = email
         self.active = active
+        self.is_admin = is_admin
 
     def is_active(self):
         return self.active
 
-class Anonymous(AnonymousUser):
-    name = u'Anonymous'
 
-login_manager.anonymous_user = Anonymous
 
 
 

@@ -1,5 +1,53 @@
 #-*- coding: utf-8 -*-
 
+import settings
+import constants
+
+from flask_oauth import OAuth
+from flask import session
+
+GOOGLE_SCOPE_LIST = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    ]
+
+oauth = OAuth()
+
+google = oauth.remote_app(
+    'google',
+    base_url='https://www.google.com/accounts/',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    request_token_url=None,
+    request_token_params={'scope': ' '.join(GOOGLE_SCOPE_LIST),
+                          'response_type': 'code'},
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_method='POST',
+    access_token_params={'grant_type': 'authorization_code'},
+    consumer_key=settings.GOOGLE_CLIENT_ID,
+    consumer_secret=settings.GOOGLE_CLIENT_SECRET
+    )
+
+# Use Twitter as example remote application
+twitter = oauth.remote_app(
+    'twitter',
+    base_url='https://api.twitter.com/1/',
+    request_token_url='https://api.twitter.com/oauth/request_token',
+    access_token_url='https://api.twitter.com/oauth/access_token',
+    authorize_url='https://api.twitter.com/oauth/authenticate',
+    consumer_key=settings.TWITTER_CONSUMER_KEY,
+    consumer_secret=settings.TWITTER_CONSUMER_SECRET,
+    )
+
+@google.tokengetter
+def get_access_token():
+    return session.get(constants.KEY_GOOGLE_OAUTH_TOKEN)
+
+@twitter.tokengetter
+def get_twitter_token():
+    return session.get(constants.KEY_TWITTER_OAUTH_TOKEN)
+
+
+"""
 import httplib
 import base64
 import json
@@ -72,3 +120,4 @@ class GitHubOAuth(object):
             data['id'] = 0
             data['success'] = False
         return data
+"""
