@@ -99,7 +99,7 @@ def login_google():
     session['google-next-url'] = next_url
     
     callback = url_for('.authorized_google', _external=True)
-    return google.authorized(callback=callback)
+    return google.authorize(callback=callback)
 
 @blueprint.route('/authorized/google')
 @google.authorized_handler
