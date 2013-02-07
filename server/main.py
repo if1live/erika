@@ -51,7 +51,12 @@ if __name__ == "__main__":
     init_view(app)
     init_controller(app)
 
-    app.run(host='0.0.0.0', port=8000)
+    # reverse proxy 
+    from werkzeug.contrib.fixers import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+    
+    #app.run(host='0.0.0.0', port=8000)
+    app.run(port=8000)
 
 
 

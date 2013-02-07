@@ -138,13 +138,13 @@ def login_github():
     # google oauth의 경우, url에 추가 정보를 달아놓으면
     # URL에서 에러를 뱉는다. 그래서 next를 따로 세션에 넣어놧다가 꺼내서 쓰자
     next_url = request.args.get('next') or request.referrer or None
-    callback = url_for('.authorized_github', _next=next_url)
+    callback = url_for('.authorized_github', next=next_url, _external=True)
     return github.authorize(callback=callback)
 
 @blueprint.route('/authorized/github')
 @github.authorized_handler
 def authorized_github(resp):
-    print 'resp'
+    print resp
     return 'fdsf'
 
 

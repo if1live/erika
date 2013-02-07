@@ -4,3 +4,4 @@
 settings.py
 *.orig
 .DS_Store
+*.db
