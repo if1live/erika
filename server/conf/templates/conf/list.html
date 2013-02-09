@@ -43,7 +43,7 @@ $(function() {
                                 <h4>{{ conf.filetype }}</h4>
                                 <div class="rating small" data-role="rating" data-param-vote="off" data-param-rating="3">
                                 </div>
-                                <p class="fg-color-black">{{ conf.desc }}</p>
+                                <p class="fg-color-black description">{{ conf.desc.split("\r")[0]|markdown|striptags|truncate(80) }}</p>
                             </div>
                         </a>
                     </li>

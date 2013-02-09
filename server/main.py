@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from flask import Flask, render_template
+from markdown import markdown
 import settings
 
 app = Flask(__name__)
@@ -44,12 +45,16 @@ if __name__ == "__main__":
         import conf.controllers
         pass
 
+    def init_jinja(app):
+        app.jinja_env.filters['markdown'] = markdown
+
     import user
     user.init_login(app)
 
     init_db()
     init_view(app)
     init_controller(app)
+    init_jinja(app)
 
     # reverse proxy 
     from werkzeug.contrib.fixers import ProxyFix
