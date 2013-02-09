@@ -1,6 +1,11 @@
 {% extends "common/base.html" %}
 {% set jsComponents = ['carousel', 'rating'] %}
-{% set slideFeature = [{'title':'Sync your Configuration', 'backgrounColor':'green', 'content':'''You can sync own configuration files for editor(e.g. emacs, vim... e.t.c.) or shell.<i class="fg-color-white place-right icon-cloud" style="font-size: 42pt"></i><br /><br /><br />'''},{'title':'Share it', 'backgrounColor':'red', 'content':'''Share configuration with others'''}] %}
+{% set slideFeature = [{'title':'Sync your Configuration',
+                        'backgrounColor':'green',
+                        'content':'''You can sync own configuration files for editor(e.g. emacs, vim... e.t.c.) or shell.<i class="fg-color-white place-right icon-cloud" style="font-size: 42pt"></i><br /><br /><br />'''},
+                        {'title':'Share it',
+                        'backgrounColor':'red',
+                        'content':'''Share configuration with others'''}] %}
 {% block customStylesheet %}
         <style type="text/css">
             #iconic-features:last-child {
@@ -28,6 +33,37 @@
                 padding-left: 20px;
                 height: 95px;
             }
+            #joinBlock {
+                overflow: hidden;
+                padding: 0;
+            }
+            #joinBlock > div {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+            }
+            .joinSubBlock2 > .listview {
+                padding: 10px;
+            }
+            .joinSubBlock2 > .listview  li {
+                padding: 0;
+                margin: 0;
+                margin-bottom: 5px; 
+                width: 100%;
+            }
+            .joinSubBlock2 > .listview .icon {
+                border: none;
+            }
+            .joinSubBlock2 > .listview {
+                max-height: 230px;
+                overflow-y: scroll;
+                margin: 0;
+            }
+            .joinSubBlock2 > .joinPrevButton {
+                width: 100%;
+                position: absolute;
+                bottom: 0
+            }
         </style>
 {% endblock customStylesheet %}
 {% block customHeadScript %}
@@ -35,8 +71,23 @@
 $(function() {
     $('#navLogin').click(function() {
         if ($('#loginNowMsg').length != 0) return false;
-        createReplyAlert($('#joinBlock > h2'), 'orange', {auth:'erika', text:'Login Here by GitHub'}, 'right', {x:40, y:30}).attr('id', 'loginNowMsg');
+        createReplyAlert($('.joinSubBlock1 > h2'), 'orange', {auth:'erika', text:'Login Here NOW'}, 'right', {x:40, y:0}).attr('id', 'loginNowMsg');
         return false;
+    });
+    $('.joinNextButton').click(function() {
+        $('.joinSubBlock:lt(2)').animate({left: '-=300'}, 'fast', function() {
+            firstBlock = $('.joinSubBlock:first').detach();
+            $(firstBlock).appendTo('#joinBlock');
+        });
+    });
+    $('.joinPrevButton').click(function() {
+        lastBlock = $('.joinSubBlock:eq(-1)').detach();
+        $(lastBlock).insertBefore('.joinSubBlock:first');
+        $('.joinSubBlock:lt(2)').animate({left: '+=' + $('.joinSubBlock:first').width()}, 'fast');
+    });
+    $('.joinNextButton, .joinPrevButton').css('cursor', 'pointer');
+    $('.joinSubBlock').each(function(index, elem) {
+        $(elem).css('left', (index==0?0:$(elem).width()) + 'px');
     });
 });
 </script>
@@ -63,7 +114,7 @@ $(function() {
                         </div>
                     </div>
                     <div class="span4">
-                        <div id="joinBlock" class="hero-unit text-center padding30">
+                        <div id="joinBlock" class="hero-unit text-center">
                             {% if current_user.is_authenticated() %}
                             <br />
                             <h2>{{ current_user.name }}</h2>
@@ -77,30 +128,37 @@ $(function() {
                             </dl>
                             <a href="/user/logout"><h3><i class="icon-exit"></i>Logout</h3></a>
                             {% else %}
-                            <h2><a href="{{ url_for('user.login_twitter') }}">
-				    LOGIN by Twitter
-			    </a></h2>
-                            <h2><a href="{{ url_for('user.login_google') }}">
-				    LOGIN by Google
-			    </a></h2>
-                            <h2><a href="{{ url_for('user.login_github') }}">
-				    LOGIN by GitHub
-			    </a></h2>
-
-                            <h2>LOGIN by<br /><i class="icon-github-3"></i>GitHub</h2>
-                            <form action="/user/login/github" method="post">
-                                <div class="input-control text">
-                                    <input id="userid" type="text" name="userid" placeholder="ID" />
+                            <div class="joinSubBlock joinSubBlock1">
+                                <br /><br />
+                                <br /><br />
+                                <h2>LOGIN NOW</h2>
+                                <br />
+                                <h1 class="joinNextButton"><i class="icon-arrow-right-3 fg-color-red"></i></h1>
+                            </div>
+                            <div class="joinSubBlock joinSubBlock2">
+                                {% set loginProviders = [
+                                    {'url':'github', 'icon':'icon-github', 'text':'GitHub'},
+                                    {'url':'google', 'icon':'icon-google', 'text':'Google'},
+                                    {'url':'twitter', 'icon':'icon-twitter', 'text':'Twitter'},
+                                    {'url':'twitter', 'icon':'icon-twitter', 'text':'Twitter'},
+                                    {'url':'twitter', 'icon':'icon-twitter', 'text':'Twitter'},
+                                ] %}
+                                <ul class="listview iconic">
+                                    {% for provider in loginProviders %}
+                                        <a href="{{ url_for('user.login_' + provider['url']) }}">
+                                            <li>
+                                                <div class="icon"><i class="{{ provider['icon'] }}"></i></div>
+                                                <div class="data"><h4>{{ provider['text'] }}</h4></div>
+                                            </li>
+                                        </a>
+                                    {% endfor %}
+                                </ul>
+                                <div class="joinPrevButton">
+                                    <h1 class="fg-color-blue">
+                                        <i class="icon-arrow-left-3"></i>
+                                    </h1>
                                 </div>
-                                <div class="input-control text">
-                                    <input type="password" name="passwd" placeholder="password" />
-                                </div>
-                                <div class="input-control text">
-                                    <button class="action-only-button" type="submit">
-                                        <h1><i class="icon-arrow-right-3 fg-color-green"></i></h1>
-                                    </button>
-                                </div>
-                            </form>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
