@@ -72,7 +72,7 @@ def authorized_twitter(resp):
     if UserOAuthController.is_exist(user_oauth) is True:
         # 이미 한번 로그인을 한 경우, 연결된 User를 찾아서 로그인 처리
         prev_oauth = UserOAuthController.get(user_oauth)
-        prev_oauth.extra = resp
+        prev_oauth.resp = resp
         prev_oauth.oauth_token = resp['oauth_token']
         db.session.commit()
         
@@ -118,7 +118,7 @@ def authorized_google(resp):
     user_oauth = info.get_oauth_info()
     if UserOAuthController.is_exist(user_oauth) is True:
         prev_oauth = UserOAuthController.get(user_oauth)
-        prev_oauth.extra = resp
+        prev_oauth.resp = resp
         prev_oauth.oauth_token = resp['access_token']
         db.session.commit()
         
@@ -144,9 +144,35 @@ def login_github():
 @blueprint.route('/authorized/github')
 @github.authorized_handler
 def authorized_github(resp):
-    print resp
-    return 'fdsf'
+    '''
+    {
+    'access_token': u'047f7d2954aa23d2690f9d5c95596a753a7f17ba', 
+    'token_type': u'bearer'
+    }
+    '''
+    next_url = request.args.get('next') or url_for('index')
+    if resp is None:
+        flash(u'You denied the request to sign in.')
+        return redirect(next_url)
 
+    session[constants.KEY_GITHUB_OAUTH_TOKEN] = (resp['access_token'], '')
+
+    info = OAuthSignUpInfo.create_with_github_resp(resp)
+    user_oauth = info.get_oauth_info()
+    if UserOAuthController.is_exist(user_oauth) is True:
+        # 이미 한번 로그인을 한 경우, 연결된 User를 찾아서 로그인 처리
+        prev_oauth = UserOAuthController.get(user_oauth)
+        prev_oauth.resp = resp
+        prev_oauth.oauth_token = resp['access_token']
+        db.session.commit()
+        
+        user_obj = prev_oauth.user
+        if login_user(user_obj, remember=True):
+            return redirect(next_url)
+        else:
+            return 'Not valid User?'
+    else:
+        return oauth_signup(info, next_url)
 
 def oauth_signup(info, next_url):
     name = UserController.get_valid_name(info.name)
@@ -168,7 +194,7 @@ def oauth_signup(info, next_url):
 class OAuthSignUpInfo(object):
     def __init__(self):
         self.oauth_token = None
-        self.oauth_extra = {}
+        self.resp = {}
         self.provider = ''
         self.provider_uid = ''
 
@@ -177,7 +203,7 @@ class OAuthSignUpInfo(object):
         
     def get_oauth_info(self):
         obj = UserOAuth(self.provider, self.provider_uid,
-                         self.oauth_token, self.oauth_extra)
+                         self.oauth_token, self.resp)
         return obj
 
     @classmethod
@@ -187,7 +213,7 @@ class OAuthSignUpInfo(object):
         info.provider_uid = resp['user_id']
         info.name = resp['screen_name']
         info.oauth_token = resp['oauth_token']
-        info.oauth_extra = resp
+        info.resp = resp
         return info
 
     @classmethod
@@ -195,7 +221,7 @@ class OAuthSignUpInfo(object):
         info = cls()
         info.provider = constants.PROVIDER_GOOGLE
         info.oauth_token = resp['access_token']
-        info.oauth_extra = resp
+        info.resp = resp
 
         data = GoogleProfileFetcher(resp['access_token']).fetch()
         info.provider_uid = data['id']
@@ -212,6 +238,41 @@ class OAuthSignUpInfo(object):
                 break
 
         return info
+
+    @classmethod
+    def create_with_github_resp(cls, resp):
+        info = cls()
+        info.provider = constants.PROVIDER_GITHUB
+        info.oauth_token = resp['access_token']
+        info.resp = resp
+
+        data = GitHubProfileFetcher(info.oauth_token)
+        print data
+        
+
+class GitHubProfileFetcher(object):
+    def __init__(self, access_token):
+        self.access_token = access_token
+    
+    def fetch(self):
+        from urllib2 import Request, urlopen, URLError
+        import json
+        
+        headers = {'Authorization': 'token ' + +self.access_token}
+        req = Request('https://api.github.com/user',
+                      None, headers)
+        try:
+            res = urlopen(req)
+            data = res.read()
+            return json.loads(data)
+        except URLError, e:
+             if e.code == 401:
+                 # Unauthorized - bad token
+                 session.pop('access_token', None)
+                 return redirect(url_for('login'))
+             return res.read()
+         
+
 
 class GoogleProfileFetcher(object):
     def __init__(self, access_token):

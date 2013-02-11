@@ -26,19 +26,19 @@ class UserOAuth(db.Model):
     token = db.Column(db.String(255))
 
     # auth 요청후 얻은 정보를 통째로 저장하기
-    extra = db.Column(db.JSONEncodedDict)
+    resp = db.Column(db.JSONEncodedDict)
 
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     
-    def __init__(self, provider='', provider_uid='', oauth_token='', extra=None):
+    def __init__(self, provider='', provider_uid='', oauth_token='', resp=None):
         self.provider = provider
         self.provider_uid = provider_uid
         self.token = oauth_token
         
-        if extra is None:
-            extra = {}
-        self.extra = extra
+        if resp is None:
+            resp = {}
+        self.resp = resp
     
 
 class User(UserMixin, db.Model):
