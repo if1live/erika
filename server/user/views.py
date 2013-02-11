@@ -246,8 +246,11 @@ class OAuthSignUpInfo(object):
         info.oauth_token = resp['access_token']
         info.resp = resp
 
-        data = GitHubProfileFetcher(info.oauth_token)
-        print data
+        data = GitHubProfileFetcher(info.oauth_token).fetch()
+        info.provider_uid = data['id']
+        info.email = data['email']
+        info.name = data['login']
+        return info
         
 
 class GitHubProfileFetcher(object):
@@ -258,7 +261,7 @@ class GitHubProfileFetcher(object):
         from urllib2 import Request, urlopen, URLError
         import json
         
-        headers = {'Authorization': 'token ' + +self.access_token}
+        headers = {'Authorization': 'token ' + self.access_token}
         req = Request('https://api.github.com/user',
                       None, headers)
         try:
